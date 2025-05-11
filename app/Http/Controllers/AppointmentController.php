@@ -8,10 +8,10 @@ use App\Models\Appointment;
 class AppointmentController extends Controller
 {
     /**
-     * Associate a client with an appointment
+     * Create an appointment and associate a client with it
      *
      * @param Request $request
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
@@ -48,7 +48,7 @@ class AppointmentController extends Controller
      *
      * @param Request $request
      * @param string $status
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     public function filterByStatus(Request $request, $status)
     {
@@ -70,6 +70,91 @@ class AppointmentController extends Controller
 
         return response()->json([
             'appointments' => $appointments
+        ]);
+    }
+
+    /**
+     * Get specific appointment by id
+     *
+     * @param Request $request
+     * @param int|string $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show(Request $request, $id)
+    {
+        $appointment = Appointment::where('id', $id)
+            ->whereHas('client', function ($query) use ($request) {
+                $query->where('user_id', $request->user()->id);
+            })
+            ->first();
+
+        if (! $appointment) {
+            return response()->json(['message' => 'Appointment not found or unauthorized'], 403);
+        }
+
+        return response()->json([
+            'appointment' => $appointment
+        ]);
+    }
+
+    /**
+     * Update appointment.
+     * Can't update the client of the appointment
+     *
+     * @param Request $request
+     * @param int|string $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request, $id)
+    {
+        $appointment = Appointment::where('id', $id)
+            ->whereHas('client', function ($query) use ($request) {
+                $query->where('user_id', $request->user()->id);
+            })
+            ->first();
+
+        if (! $appointment) {
+            return response()->json(['message' => 'Appointment not found or unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'start_time' => 'sometimes|date',
+            'timezone' => 'sometimes|string|timezone',
+            'recurrence' => 'nullable|string',
+            'notes' => 'nullable|string',
+        ]);
+
+        $appointment->update($validated);
+
+        return response()->json([
+            'message' => 'Appointment updated successfully',
+            'appointment' => $appointment,
+        ]);
+    }
+
+    /**
+     * Delete an appointment
+     *
+     * @param Request $request
+     * @param int|string $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroy(Request $request, $id)
+    {
+        $appointment = Appointment::where('id', $id)
+            ->whereHas('client', function ($query) use ($request) {
+                $query->where('user_id', $request->user()->id);
+            })
+            ->first();
+
+        if (! $appointment) {
+            return response()->json(['message' => 'Appointment not found or unauthorized'], 403);
+        }
+
+        $appointment->delete();
+
+        return response()->json([
+            'message' => 'Appointment deleted successfully'
         ]);
     }
 }
