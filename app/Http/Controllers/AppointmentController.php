@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Appointment;
+use App\Models\ReminderDispatch;
+use App\Jobs\SendReminder;
 
 class AppointmentController extends Controller
 {
@@ -36,6 +38,19 @@ class AppointmentController extends Controller
             'recurrence' => $validated['recurrence'],
             'notes' => $validated['notes'],
         ]);
+
+
+        $reminderTime = \Carbon\Carbon::parse($appointment->start_time, $appointment->timezone)->subMinutes(1)->timezone('UTC');
+
+        // create ReminderDispatch record
+        $reminder = ReminderDispatch::create([
+            'appointment_id' => $appointment->id,
+            'scheduled_for' => $reminderTime,
+            'status' => 'pending',
+        ]);
+
+        // dispatch the job with delay
+        SendReminder::dispatch($reminder)->delay($reminderTime);        
 
         return response()->json([
             'message' => 'Appointment created successfully',
