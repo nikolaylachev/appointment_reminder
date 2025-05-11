@@ -8,6 +8,14 @@ use App\Models\ReminderDispatch;
 
 class Appointment extends Model
 {
+    protected $fillable = [
+        'client_id',
+        'start_time',
+        'timezone',
+        'recurrence',
+        'notes',
+    ];
+
     public function client()
     {
         return $this->belongsTo(Client::class);
