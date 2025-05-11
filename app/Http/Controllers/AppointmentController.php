@@ -3,9 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Appointment;
 
 class AppointmentController extends Controller
 {
+    /**
+     * Associate a client with an appointment
+     *
+     * @param Request $request
+     * @return void
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -34,5 +41,35 @@ class AppointmentController extends Controller
             'message' => 'Appointment created successfully',
             'appointment' => $appointment,
         ], 201);
+    }
+
+    /**
+     * Get upcoming or past appointments
+     *
+     * @param Request $request
+     * @param string $status
+     * @return void
+     */
+    public function filterByStatus(Request $request, $status)
+    {
+        $now = now();
+
+        $query = Appointment::whereHas('client', function ($q) use ($request) {
+            $q->where('user_id', $request->user()->id);
+        });
+
+        if ($status === 'upcoming') {
+            $query->where('start_time', '>=', $now);
+        } elseif ($status === 'past') {
+            $query->where('start_time', '<', $now);
+        } else {
+            return response()->json(['message' => 'Invalid status'], 400);
+        }
+
+        $appointments = $query->orderBy('start_time')->get();
+
+        return response()->json([
+            'appointments' => $appointments
+        ]);
     }
 }
