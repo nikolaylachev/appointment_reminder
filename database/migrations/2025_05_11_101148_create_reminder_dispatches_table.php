@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('appointment_id')->constrained()->onDelete('cascade');
             $table->timestamp('scheduled_for'); // When the reminder is supposed to be sent
             $table->timestamp('sent_at')->nullable(); // When it was actually sent
-            $table->string('status')->default('pending'); // pending, sent, failed, etc.
+            $table->string('status')->default('scheduled'); // scheduled, sent, failed, etc.
             $table->timestamps();
         });
     }

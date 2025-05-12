@@ -46,7 +46,7 @@ class AppointmentController extends Controller
         $reminder = ReminderDispatch::create([
             'appointment_id' => $appointment->id,
             'scheduled_for' => $reminderTime,
-            'status' => 'pending',
+            'status' => 'scheduled',
         ]);
 
         // dispatch the job with delay
