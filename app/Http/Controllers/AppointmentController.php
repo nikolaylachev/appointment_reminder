@@ -23,6 +23,7 @@ class AppointmentController extends Controller
             'timezone' => 'required|string|timezone',
             'recurrence' => 'nullable|string',
             'notes' => 'nullable|string',
+            'reminder_offset' => 'nullable|integer|min:1|max:1440', // max 1 day
         ]);
 
         // Ensure the client belongs to the authenticated user
@@ -37,10 +38,11 @@ class AppointmentController extends Controller
             'timezone' => $validated['timezone'],
             'recurrence' => $validated['recurrence'],
             'notes' => $validated['notes'],
+            'reminder_offset' => $validated['reminder_offset'] ?? 1,
         ]);
 
 
-        $reminderTime = \Carbon\Carbon::parse($appointment->start_time, $appointment->timezone)->subMinutes(1)->timezone('UTC');
+        $reminderTime = \Carbon\Carbon::parse($appointment->start_time, $appointment->timezone)->subMinutes($appointment->reminder_offset)->timezone('UTC');
 
         // create ReminderDispatch record
         $reminder = ReminderDispatch::create([

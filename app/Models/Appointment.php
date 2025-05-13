@@ -14,6 +14,7 @@ class Appointment extends Model
         'timezone',
         'recurrence',
         'notes',
+        'reminder_offset',
     ];
 
     public function client()
