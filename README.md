@@ -73,8 +73,6 @@ The tokens for an existing user are recieved from the `/login` endpoint.
 
 ## ⚙️ Installation (Laravel Sail / Docker)
 
-### 1. Clone the repo
-
 ```bash
 # 1. Clone the repo
 git clone https://github.com/nikolaylachev/appointment_reminder.git
