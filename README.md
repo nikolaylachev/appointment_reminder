@@ -71,6 +71,24 @@ The tokens for an existing user are recieved from the `/login` endpoint.
 
 5. The sending of reminders is simulated in the log file - `storage/logs/laravel.log`
 
+6. If composer hits GitHub's rate limits for unauthenticated API requests when you install the dependencies using `composer install`, you can try to:  
+    #### Step 1: Create a token
+
+    Visit this link to generate a token (leave all scopes unchecked):
+
+    👉 https://github.com/settings/tokens/new?scopes=&description=Composer+Token
+
+    - Token will have **read-only access to public packages**
+    - Safe to use — no write permissions
+
+    #### Step 2: Add token to Composer - Save token globally
+    Run:
+
+    ```bash
+    composer config --global github-oauth.github.com YOUR_TOKEN_HERE
+    ```
+    You can now run: `composer install` without hitting GitHub's API limits.
+---
 ## ⚙️ Installation (Laravel Sail / Docker)
 
 ```bash
