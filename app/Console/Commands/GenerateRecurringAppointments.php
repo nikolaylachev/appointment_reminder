@@ -7,6 +7,7 @@ use App\Models\Appointment;
 use App\Models\ReminderDispatch;
 use App\Jobs\SendReminder;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class GenerateRecurringAppointments extends Command
 {
@@ -29,6 +30,8 @@ class GenerateRecurringAppointments extends Command
      */
     public function handle()
     {
+        Log::info("Command '{$this->signature}' started at " . now());
+
         $now = Carbon::now();
 
         $recurringAppointments = Appointment::with('client')
@@ -91,6 +94,8 @@ class GenerateRecurringAppointments extends Command
             SendReminder::dispatch($reminder)->delay($reminderTime);
 
             $this->info("Created recurring appointment ID {$newAppointment->id} for client {$appointment->client_id}");
+
+            Log::info("Created recurring appointment ID {$newAppointment->id} for client {$appointment->client_id} " . now());
         }
 
         return Command::SUCCESS;

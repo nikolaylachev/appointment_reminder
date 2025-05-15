@@ -5,6 +5,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Console\Scheduling\Schedule;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -23,4 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 'errors' => $e->errors()
             ], 422);
         });
+    })
+    ->withSchedule(function (Schedule $schedule) {
+        $schedule->command('appointments:generate-recurring')->daily();
     })->create();
