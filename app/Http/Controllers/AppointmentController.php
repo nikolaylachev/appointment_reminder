@@ -63,7 +63,7 @@ class AppointmentController extends Controller
     }
 
     /**
-     * Get upcoming or past appointments
+     * Get upcoming or past appointments for a specific timezone
      *
      * @param Request $request
      * @param string $status
@@ -71,24 +71,26 @@ class AppointmentController extends Controller
      */
     public function filterByStatus(Request $request, $status)
     {
-        $now = now();
+        $timezone = $request->query('timezone', 'UTC');
+
+        if (!in_array($status, ['upcoming', 'past'])) {
+            return response()->json(['message' => 'Invalid status'], 400);
+        }
+
+        $now = now()->setTimezone($timezone);
 
         $query = Appointment::whereHas('client', function ($q) use ($request) {
             $q->where('user_id', $request->user()->id);
-        });
+        })->where('timezone', $timezone); // filter by timezone too
 
         if ($status === 'upcoming') {
             $query->where('start_time', '>=', $now);
         } elseif ($status === 'past') {
             $query->where('start_time', '<', $now);
-        } else {
-            return response()->json(['message' => 'Invalid status'], 400);
         }
 
-        $appointments = $query->orderBy('start_time')->get();
-
         return response()->json([
-            'appointments' => $appointments
+            'appointments' => $query->orderBy('start_time', 'asc')->get()
         ]);
     }
 
