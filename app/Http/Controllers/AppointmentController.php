@@ -24,6 +24,7 @@ class AppointmentController extends Controller
             'recurrence' => 'nullable|string',
             'notes' => 'nullable|string',
             'reminder_offset' => 'nullable|integer|min:1|max:1440', // max 1 day
+            'repeat_until' => 'nullable|date|after:start_time',
         ]);
 
         // Ensure the client belongs to the authenticated user
@@ -39,6 +40,7 @@ class AppointmentController extends Controller
             'recurrence' => $validated['recurrence'],
             'notes' => $validated['notes'],
             'reminder_offset' => $validated['reminder_offset'] ?? 1,
+            'repeat_until' => $validated['repeat_until'] ?? null,
         ]);
 
 

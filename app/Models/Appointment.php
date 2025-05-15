@@ -15,6 +15,7 @@ class Appointment extends Model
         'recurrence',
         'notes',
         'reminder_offset',
+        'repeat_until',
     ];
 
     public function client()
