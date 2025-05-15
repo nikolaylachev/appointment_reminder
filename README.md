@@ -41,13 +41,13 @@ A RESTful API built with **Laravel 12** for managing appointments and sending au
 
 ### 📅 Appointments
 
-| Method | Endpoint                             | Description                                                     |
-|--------|--------------------------------------|-----------------------------------------------------------------|
-| POST   | `/api/appointments`                  | Create an appointment                                           |
-| GET    | `/api/appointments/status/{status}`  | View upcoming or past appointments (`status = upcoming/past`)   |
-| GET    | `/api/appointments/{id}`             | View appointment details                                        |
-| PUT    | `/api/appointments/{id}`             | Update an appointment                                           |
-| DELETE | `/api/appointments/{id}`             | Delete an appointment                                           |
+| Method | Endpoint                                               | Description                                                                                                       |
+|--------|--------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|
+| POST   | `/api/appointments`                                    | Create an appointment                                                                                             |
+| GET    | `/api/appointments/status/{status}?timezone={timezone}`| View upcoming or past appointments (`status = upcoming/past`, `timezone = Europe/Sofia, America/New_York, etc`)   |
+| GET    | `/api/appointments/{id}`                               | View appointment details                                                                                          |
+| PUT    | `/api/appointments/{id}`                               | Update an appointment                                                                                             |
+| DELETE | `/api/appointments/{id}`                               | Delete an appointment                                                                                             |
 
 ### 🔁 Reminders
 
