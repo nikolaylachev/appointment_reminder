@@ -20,7 +20,7 @@ A RESTful API built with **Laravel 12** for managing appointments and sending au
 
 ## 🧱 Tech Stack
 
-- PHP 8.3, Laravel 12
+- PHP 8.4, Laravel 12
 - Sanctum (API auth)
 - MySQL (via Docker)
 - Mailpit (optional)
@@ -91,16 +91,20 @@ The tokens for an existing user are recieved from the `/api/login` endpoint.
 7. The POST	`/api/appointments` endpoint has the following parameters in it's body:
     ```
     {
-        "client_id": 3, # The client id for the appointment
-        "start_time": "2025-05-15T15:45:00", # The start time of the appointment in the client's local time
-        "timezone": "Europe/Sofia", # The client's timezone
-        "recurrence": "weekly", # weekly/monthly recurrence or null for no recurrence
+        "client_id": 3, // The client id for the appointment
+        "start_time": "2025-05-15T15:45:00", // The start time of the appointment in the client's local time
+        "timezone": "Europe/Sofia", // The client's timezone
+        "recurrence": "weekly", // weekly/monthly recurrence or null for no recurrence
         "notes": "Weekly follow-up",
-        "reminder_offset": 2, # The reminder offset in minutes
-        "repeat_until": "2025-05-31T12:00:00" # When should the appointment stop recurring if needed. In the client's local time
+        "reminder_offset": 2, // The reminder offset in minutes
+        "repeat_until": "2025-05-31T12:00:00" // When should the appointment stop recurring if needed. In the client's local time
     }
-
     ```
+8. The `appointments:generate-recurring` command which generates recurring appointments is scheduled to run every day at midnight in `bootstrap/app.php`. You can see that it's scheduled using: `./vendor/bin/sail artisan schedule:list`  
+If you want to manually test the command, you can run it directly:  
+`./vendor/bin/sail artisan appointments:generate-recurring`  
+or if you prefer, you can use `./vendor/bin/sail artisan schedule:test` to run the command  
+The command writes its output in `storage/logs/laravel.log`
 ---
 ## ⚙️ Installation (Laravel Sail / Docker)
 
@@ -125,3 +129,7 @@ php artisan key:generate
 
 # 6. Start the queue
 ./vendor/bin/sail artisan queue:work
+
+# 7. List all scheduled tasks and manually run the command for generating recurring appointments (Optional)
+./vendor/bin/sail artisan schedule:list
+./vendor/bin/sail artisan appointments:generate-recurring
