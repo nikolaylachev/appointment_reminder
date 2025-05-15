@@ -33,27 +33,27 @@ A RESTful API built with **Laravel 12** for managing appointments and sending au
 
 ### 🔐 Authentication
 
-| Method | Endpoint     | Description                             |
-|--------|--------------|-----------------------------------------|
-| POST   | `/register`  | Register a new user and get a token     |
-| POST   | `/login`     | Log in and get token                    |
-| POST   | `/logout`    | Revoke current token                    |
+| Method | Endpoint         | Description                             |
+|--------|------------------|-----------------------------------------|
+| POST   | `/api/register`  | Register a new user and get a token     |
+| POST   | `/api/login`     | Log in and get token                    |
+| POST   | `/api/logout`    | Revoke current token                    |
 
 ### 📅 Appointments
 
-| Method | Endpoint                         | Description                       |
-|--------|----------------------------------|-----------------------------------|
-| POST   | `/appointments`                  | Create an appointment             |
-| GET    | `/appointments/status/{status}`  | View upcoming or past appointments (`status = upcoming|past`) |
-| GET    | `/appointments/{id}`             | View appointment details          |
-| PUT    | `/appointments/{id}`             | Update an appointment             |
-| DELETE | `/appointments/{id}`             | Delete an appointment             |
+| Method | Endpoint                             | Description                                                     |
+|--------|--------------------------------------|-----------------------------------------------------------------|
+| POST   | `/api/appointments`                  | Create an appointment                                           |
+| GET    | `/api/appointments/status/{status}`  | View upcoming or past appointments (`status = upcoming/past`)   |
+| GET    | `/api/appointments/{id}`             | View appointment details                                        |
+| PUT    | `/api/appointments/{id}`             | Update an appointment                                           |
+| DELETE | `/api/appointments/{id}`             | Delete an appointment                                           |
 
 ### 🔁 Reminders
 
-| Method | Endpoint                         | Description                       |
-|--------|----------------------------------|-----------------------------------|
-| GET    | `/reminders/status/{status}`     | View scheduled or sent reminders (`status = scheduled|sent`) |
+| Method | Endpoint                             | Description                                                  |
+|--------|--------------------------------------|--------------------------------------------------------------|
+| GET    | `/api/reminders/status/{status}`     | View scheduled or sent reminders (`status = scheduled/sent`) |
 
 ---
 
@@ -65,7 +65,7 @@ Email:    test@example.com
 Password: 123456789
 
 3. The user authentication is made with Laravel Sanctum. Sanctum allows you to issue API tokens that may be used to authenticate API requests to the application. When making requests using API tokens, the token should be included in the **Authorization** header as a **Bearer** token.
-The tokens for an existing user are recieved from the `/login` endpoint.
+The tokens for an existing user are recieved from the `/api/login` endpoint.
 
 4. Please, take a look at the following [Postman documentation](https://documenter.getpostman.com/view/6991599/2sB2qUo57f) in order to see the expected parameters for the different endpoints
 
@@ -88,12 +88,26 @@ The tokens for an existing user are recieved from the `/login` endpoint.
     composer config --global github-oauth.github.com YOUR_TOKEN_HERE
     ```
     You can now run: `composer install` without hitting GitHub's API limits.
+7. The POST	`/api/appointments` endpoint has the following parameters in it's body:
+    ```
+    {
+        "client_id": 3, # The client id for the appointment
+        "start_time": "2025-05-15T15:45:00", # The start time of the appointment in the client's local time
+        "timezone": "Europe/Sofia", # The client's timezone
+        "recurrence": "weekly", # weekly/monthly recurrence or null for no recurrence
+        "notes": "Weekly follow-up",
+        "reminder_offset": 2, # The reminder offset in minutes
+        "repeat_until": "2025-05-31T12:00:00" # When should the appointment stop recurring if needed. In the client's local time
+    }
+
+    ```
 ---
 ## ⚙️ Installation (Laravel Sail / Docker)
 
 ```bash
 # 1. Clone the repo
 git clone https://github.com/nikolaylachev/appointment_reminder.git
+# or git clone git@github.com:nikolaylachev/appointment_reminder.git depending on your configuration
 cd appointment_reminder
 
 # 2. Copy .env and install dependencies
